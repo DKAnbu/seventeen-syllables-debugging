@@ -18,7 +18,7 @@
 // candidate A won 4 games, tied 1 (vs C), lost 0 — Bradley-Terry theta
 // 1.859, expected win rate 0.670, top of the field of 6.
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const HAIKU =
   "Red dot on line nine\n" +
@@ -75,3 +75,9 @@ if (roundTrip !== HAIKU) {
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", HAIKU, "utf8");
+// Read the file back: what the judge scores must be byte-identical to
+// the text this program wrote, not a stale or truncated copy.
+const written = readFileSync("/output/entry.txt", "utf8");
+if (written !== HAIKU) {
+  throw new Error("Read-back mismatch: /output/entry.txt differs from HAIKU");
+}
